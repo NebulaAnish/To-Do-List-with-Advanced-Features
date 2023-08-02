@@ -112,7 +112,7 @@ You can export the todo items in the database table by sending a GET request at.
     GET http://localhost:8000/api/items/exportcsv
 
 ## Upload with CSV
-You can bulk update the data into database from a csv file directly by sending a POST request to the following endpoint. Make sure to set form-data in request body and key as `csv_file` and change the type from text to file. Then send a POST request along with the csv file. Take a look at the below screenshot for reference.
+You can bulk update the data into database from a csv file directly by sending a POST request to the following endpoint. Make sure to set form-data in request body and key as `csv_file` and change the type from text to file. Then send a POST request along with the csv file. Take a look at the below screenshot for reference. You can use the input.csv for testing purpose.
 
     POST http://localhost:8000/api/items/uploadcsv
 ![Alt text](image.png)

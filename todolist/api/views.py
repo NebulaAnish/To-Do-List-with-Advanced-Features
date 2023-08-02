@@ -48,34 +48,6 @@ class CSVFileUploadView(generics.CreateAPIView):
 
         return Response({'message': 'CSV data Saved to the database.'}, status=status.HTTP_201_CREATED)
 
-
-# class CSVFileUploadView(generics.ListCreateAPIView):
-#     queryset = ToDoItem.objects.all()
-#     serializer_class = ToDoItemSerializer
-
-#     @action(detail=False,methods=['POST'])
-#     def upload_data(self,request):
-#         file = request.FILES['file']
-#         content = pd.read_csv(file)
-#         todo_list =[]
-#         for _,row in content.iterrows():
-#             (
-#                 id,
-#                 title,
-#                 description,
-#                 completed,
-#             ) = row
-#             todo_list.append(
-#                 Product(
-#                     id=id,
-#                     title=title,
-#                     description=description,
-#                     completed=completed
-#                 )
-#             )
-#         ToDoItem.objects.bulk_create(todo_list)
-#         return Response("Successfully Uploaded the data")
-
 class ExportCsvView(APIView):
     def get(self,request):
         items = ToDoItem.objects.all()
@@ -92,14 +64,12 @@ class ExportCsvView(APIView):
 @api_view(['GET'])
 def ApiOverview(request):
     api_urls = {
-        'List To Do Items With Pagination and Search Functionality using query parameters':'GET /items',
+        'List with query parameters support':'GET /items',
         'Create':'POST /items/',
         'Retrieve':'GET /items/<id>/',
         'Update':'PUT /items/<id>/',
         'Delete': 'DELETE /items/<id>/',
         'UploadCSV': 'PUT /uploadcsv/',
         'Export CSV':'GET /exportcsv/'
-
-
     }
     return Response(api_urls)
