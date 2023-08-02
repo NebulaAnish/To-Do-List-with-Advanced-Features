@@ -1,5 +1,6 @@
 from rest_framework import generics, filters
-from rest_framework.pagination import PageNumberPagination
+# from rest_framework.pagination import PageNumberPagination
+from .pagination import CustomPageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,7 +13,7 @@ import django_filters
 class ToDoItemListView(generics.ListCreateAPIView):
     queryset = ToDoItem.objects.all()
     serializer_class = ToDoItemSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPageNumberPagination
     filter_backends= [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
     filterset_fields = ['id','title', 'description', 'completed']
@@ -26,13 +27,6 @@ class ToDoItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['GET'])
 def ApiOverview(request):
-    # api_urls = {
-    #     'To Do Items':'todolist/',
-    #     'Search by Title':'/?title=title',
-    #     'Search by Description':'/?description=description',
-    #     'Add':'/create',
-    #     'Update':'/item/pk/update',
-    # }
     api_urls = {
         'List To Do Items With Pagination and Search Functionality using query parameters':'GET /items',
         'Create':'POST /items/',
