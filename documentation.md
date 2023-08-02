@@ -107,7 +107,7 @@ Delete the data by sending delete request at.
 
 
 ## Export CSV
-You can export the todo items in the database table by sending a GET request at.
+You can export the todo items in the database table by sending a GET request at. The exported csv is stored at `export/excel/todoitems` folder inside the api app.
 
     GET http://localhost:8000/api/items/exportcsv
 
