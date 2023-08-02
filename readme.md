@@ -22,7 +22,7 @@ Below are the steps to clone this project and get the server running. Refer to `
     - Linux: `$ source .venv/bin/activate`
 - Clone the repository.
 
-    `$git clone https_link`
+    `$git clone https://github.com/NebulaAnish/To-Do-List-with-Advanced-Features.git`
 - Install the required dependencies.
 
     `$pip install -r requirements.txt`
