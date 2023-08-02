@@ -6,8 +6,8 @@ class ToDoItemSerializer(serializers.ModelSerializer):
         model = ToDoItem
         fields = ['id', 'title','description','completed']
 
-class FileUploadSerializer(serializers.Serializer):
-    file = serializers.FileField()
+class CSVFileUploadSerializer(serializers.Serializer):
+    csv_file = serializers.FileField()  
 
 # class SaveFileSerializer(serializers.Serializer):
 #     class Meta:

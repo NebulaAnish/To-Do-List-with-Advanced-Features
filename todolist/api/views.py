@@ -1,16 +1,21 @@
-from rest_framework import generics, filters, status
-# from rest_framework.pagination import PageNumberPagination
-from .pagination import CustomPageNumberPagination
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-
-from .models import ToDoItem
-from .serializers import ToDoItemSerializer, FileUploadSerializer
-from django.utils.decorators import method_decorator
 import django_filters
 import pandas as pd
+import csv
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+
+from rest_framework import generics, filters, status
+from rest_framework.decorators import api_view, action
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+
+from .pagination import CustomPageNumberPagination
+from .models import ToDoItem
+from .serializers import ToDoItemSerializer, CSVFileUploadSerializer
 
 class ToDoItemListView(generics.ListCreateAPIView):
     queryset = ToDoItem.objects.all()
@@ -29,26 +34,47 @@ class ToDoItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ToDoItemSerializer
 
 
-class UploadFileView(generics.CreateAPIView):
-    serializer_class = FileUploadSerializer
+class CSVFileUploadView(generics.CreateAPIView):
+    serializer_class = CSVFileUploadSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        file = serializer.validated_data['file']
-        reader = pd.read_csv(file)
-        
-        for _,row in header.iterrows():
-            new_file = File(
-                id=row['id'],
-                title=row['title'],
-                description=row['description'],
-                completed=row['completed']
-            )
+    def create(self, request, *args, **kwargs):
+        csv_file = request.data['csv_file']
 
-            new_file.save()
-        return Response({"status":"success"},status=status.HTTP_201_CREATED)
+        df = pd.read_csv(csv_file)
+        items_to_create = df.to_dict(orient='records')
 
+        ToDoItem.objects.bulk_create([ToDoItem(**item) for item in items_to_create])
+
+        return Response({'message': 'CSV data Saved to the database.'}, status=status.HTTP_201_CREATED)
+
+
+# class CSVFileUploadView(generics.ListCreateAPIView):
+#     queryset = ToDoItem.objects.all()
+#     serializer_class = ToDoItemSerializer
+
+#     @action(detail=False,methods=['POST'])
+#     def upload_data(self,request):
+#         file = request.FILES['file']
+#         content = pd.read_csv(file)
+#         todo_list =[]
+#         for _,row in content.iterrows():
+#             (
+#                 id,
+#                 title,
+#                 description,
+#                 completed,
+#             ) = row
+#             todo_list.append(
+#                 Product(
+#                     id=id,
+#                     title=title,
+#                     description=description,
+#                     completed=completed
+#                 )
+#             )
+#         ToDoItem.objects.bulk_create(todo_list)
+#         return Response("Successfully Uploaded the data")
 
 class ExportCsvView(APIView):
     def get(self,request):
