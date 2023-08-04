@@ -34,6 +34,15 @@ class ToDoItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ToDoItemSerializer
 
 
+# views.py
+
+import pandas as pd
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from .models import ToDoItem
+from .serializers import CSVFileUploadSerializer
+
 class CSVFileUploadView(generics.CreateAPIView):
     serializer_class = CSVFileUploadSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -44,9 +53,15 @@ class CSVFileUploadView(generics.CreateAPIView):
         df = pd.read_csv(csv_file)
         items_to_create = df.to_dict(orient='records')
 
+        existing_ids = ToDoItem.objects.values_list('id', flat=True)
+        conflicting_ids = [item['id'] for item in items_to_create if item['id'] in existing_ids]
+
+        if conflicting_ids:
+            return Response({'error': f'Conflicting ids: {conflicting_ids}'}, status=status.HTTP_400_BAD_REQUEST)
+        
         ToDoItem.objects.bulk_create([ToDoItem(**item) for item in items_to_create])
 
-        return Response({'message': 'CSV data Saved to the database.'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'CSV data saved to the database.'}, status=status.HTTP_201_CREATED)
 
 class ExportCsvView(APIView):
     def get(self,request):
