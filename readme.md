@@ -4,9 +4,9 @@ This is a to do list api with some advanced features. The API isn't protected as
 - Basic CRUD operations.
 - CSV File Upload to bulk update database contents.
 - Export database table as CSV.
-- Pagination with page and count query paramters.
+- Pagination with page and count query parameters.
 - Case in-sensitive search.
-- Filter items based on paramters.
+- Filter items based on parameters.
 - Order items in either ascending or descending order with respect to one of it's properties.
 
 
